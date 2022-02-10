@@ -1,8 +1,6 @@
 package processors
 
 import (
-	"encoding/json"
-
 	"github.com/lovoo/goka"
 	"github.com/rs/zerolog"
 	"github.com/uber/h3-go"
@@ -24,41 +22,6 @@ type FenceData struct {
 type FenceEvent struct {
 	CloudEvent
 	Data FenceData `json:"data"`
-}
-
-type StatusData struct {
-	Latitude  *float64               `json:"latitude"`
-	Longitude *float64               `json:"longitude"`
-	Overflow  map[string]interface{} `json:"-"`
-}
-
-func (d *StatusData) MarshalJSON() ([]byte, error) {
-	if d.Latitude != nil {
-		d.Overflow["latitude"] = d.Latitude
-	} else {
-		delete(d.Overflow, "latitude")
-	}
-
-	if d.Longitude != nil {
-		d.Overflow["longitude"] = d.Longitude
-	} else {
-		delete(d.Overflow, "longitude")
-	}
-
-	return json.Marshal(d.Overflow)
-}
-
-func (d *StatusData) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, d); err != nil {
-		return err
-	}
-
-	return json.Unmarshal(data, &d.Overflow)
-}
-
-type StatusEvent struct {
-	CloudEvent
-	Data StatusData `json:"data"`
 }
 
 var StatusCodec = &JSONCodec{Factory: func() interface{} { return new(StatusEvent) }}
