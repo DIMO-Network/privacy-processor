@@ -7,6 +7,9 @@ import (
 
 	"github.com/DIMO-Network/privacy-processor/internal/config"
 	"github.com/DIMO-Network/privacy-processor/internal/processors"
+	"github.com/Jeffail/benthos/v3/lib/util/hash/murmur2"
+	"github.com/Shopify/sarama"
+
 	"github.com/lovoo/goka"
 	"github.com/rs/zerolog"
 )
@@ -22,6 +25,13 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to load config file")
 	}
 
+	gokaConfig := goka.DefaultConfig()
+	gokaConfig.Version = sarama.V2_6_0_0
+	gokaConfig.Producer.Partitioner = sarama.NewCustomPartitioner(
+		sarama.WithAbsFirst(),
+		sarama.WithCustomHashFunction(murmur2.New32),
+	)
+
 	fg := processors.Privacy{
 		Group:        goka.Group(settings.PrivacyProcessorConsumerGroup),
 		StatusInput:  goka.Stream(settings.DeviceStatusTopic),
@@ -36,8 +46,8 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create privacy processor")
 	}
-	err = p.Run(context.Background())
-	if err != nil {
+
+	if err := p.Run(context.Background()); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start privacy processor")
 	}
 }
