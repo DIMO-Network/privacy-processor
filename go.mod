@@ -3,6 +3,7 @@ module github.com/DIMO-Network/privacy-processor
 go 1.17
 
 require (
+	github.com/Shopify/sarama v1.30.1
 	github.com/lovoo/goka v1.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.26.1
@@ -18,7 +19,6 @@ require (
 
 require (
 	github.com/Jeffail/benthos/v3 v3.63.0
-	github.com/Shopify/sarama v1.31.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
