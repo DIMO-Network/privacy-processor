@@ -27,6 +27,7 @@ func main() {
 		StatusInput:  goka.Stream(settings.DeviceStatusTopic),
 		FenceTable:   goka.Table(settings.PrivacyFenceTopic),
 		StatusOutput: goka.Stream(settings.DeviceStatusPrivateTopic),
+		Logger:       &log,
 	}
 
 	fgg := fg.Define()

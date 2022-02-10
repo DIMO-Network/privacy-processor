@@ -2,60 +2,79 @@ package processors
 
 import (
 	"encoding/json"
-	"fmt"
-	"time"
 
 	"github.com/lovoo/goka"
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
+	"github.com/rs/zerolog"
 	"github.com/uber/h3-go"
 )
-
-type CloudEvent struct {
-	ID          string          `json:"id"`
-	Source      string          `json:"source"`
-	SpecVersion string          `json:"specversion"`
-	Subject     string          `json:"subject"`
-	Time        time.Time       `json:"time"`
-	Type        string          `json:"type"`
-	Data        json.RawMessage `json:"data"`
-}
-
-type CloudEventCodec struct{}
-
-func (c *CloudEventCodec) Encode(value interface{}) ([]byte, error) {
-	return json.Marshal(value)
-}
-
-func (c *CloudEventCodec) Decode(data []byte) (interface{}, error) {
-	ce := new(CloudEvent)
-	err := json.Unmarshal(data, ce)
-	return ce, err
-}
 
 type Privacy struct {
 	Group        goka.Group
 	StatusInput  goka.Stream
 	FenceTable   goka.Table
 	StatusOutput goka.Stream
+
+	Logger *zerolog.Logger
 }
 
-var fastOptions = &sjson.Options{
-	Optimistic:     true,
-	ReplaceInPlace: true,
+type FenceData struct {
+	H3Indexes []string `json:"h3Indexes"`
 }
+
+type FenceEvent struct {
+	CloudEvent
+	Data FenceData `json:"data"`
+}
+
+type StatusData struct {
+	Latitude  *float64               `json:"latitude"`
+	Longitude *float64               `json:"longitude"`
+	Overflow  map[string]interface{} `json:"-"`
+}
+
+func (d *StatusData) MarshalJSON() ([]byte, error) {
+	if d.Latitude != nil {
+		d.Overflow["latitude"] = d.Latitude
+	} else {
+		delete(d.Overflow, "latitude")
+	}
+
+	if d.Longitude != nil {
+		d.Overflow["longitude"] = d.Longitude
+	} else {
+		delete(d.Overflow, "longitude")
+	}
+
+	return json.Marshal(d.Overflow)
+}
+
+func (d *StatusData) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, d); err != nil {
+		return err
+	}
+
+	return json.Unmarshal(data, &d.Overflow)
+}
+
+type StatusEvent struct {
+	CloudEvent
+	Data StatusData `json:"data"`
+}
+
+var StatusCodec = &JSONCodec{Factory: func() interface{} { return new(StatusEvent) }}
+var FenceCodec = &JSONCodec{Factory: func() interface{} { return new(FenceEvent) }}
 
 func (g *Privacy) Define() *goka.GroupGraph {
 	return goka.DefineGroup(g.Group,
-		goka.Input(g.StatusInput, new(CloudEventCodec), g.processStatusEvent),
-		goka.Join(g.FenceTable, new(CloudEventCodec)),
-		goka.Output(g.StatusOutput, new(CloudEventCodec)),
+		goka.Input(g.StatusInput, StatusCodec, g.processStatusEvent),
+		goka.Join(g.FenceTable, FenceCodec),
+		goka.Output(g.StatusOutput, StatusCodec),
 	)
 }
 
 func (g *Privacy) processStatusEvent(ctx goka.Context, msg interface{}) {
 	fence := g.getFence(ctx)
-	event := msg.(*CloudEvent)
+	event := msg.(*StatusEvent)
 
 	sanitizeEvent(event, fence)
 
@@ -63,47 +82,24 @@ func (g *Privacy) processStatusEvent(ctx goka.Context, msg interface{}) {
 }
 
 // sanitizeEvent modifies the given CloudEvent using fence.
-func sanitizeEvent(event *CloudEvent, fence []h3.H3Index) {
-	lat, err := getNumber(event.Data, "latitude")
-	if err != nil {
+func sanitizeEvent(event *StatusEvent, fence []h3.H3Index) {
+	if event.Data.Latitude == nil || event.Data.Longitude == nil {
 		return
 	}
 
-	lng, err := getNumber(event.Data, "longitude")
-	if err != nil {
-		return
-	}
-
-	geo := h3.GeoCoord{Latitude: lat, Longitude: lng}
+	geo := h3.GeoCoord{Latitude: *event.Data.Latitude, Longitude: *event.Data.Longitude}
 
 	for _, fenceInd := range fence {
-		// TODO: Should really validate res more
+		// TODO: Should really validate res more.
 		res := h3.Resolution(fenceInd)
+		// TODO: Cache these.
 		statusInd := h3.FromGeo(geo, res)
 		if statusInd == fenceInd {
 			outGeo := h3.ToGeo(h3.ToParent(statusInd, res-1))
-			event.Data, _ = sjson.SetBytesOptions(event.Data, "latitude", outGeo.Latitude, fastOptions)
-			event.Data, _ = sjson.SetBytesOptions(event.Data, "longitude", outGeo.Longitude, fastOptions)
+			event.Data.Latitude, event.Data.Longitude = &outGeo.Latitude, &outGeo.Longitude
 			break
 		}
 	}
-}
-
-// getNumber takes the marshaled JSON in data and tries to retrieve the numeric value associated
-// with the given key.
-func getNumber(data []byte, key string) (float64, error) {
-	val := gjson.GetBytes(data, key)
-	if !val.Exists() {
-		return 0, fmt.Errorf("no field %s in document", key)
-	}
-	if val.Type != gjson.Number {
-		return 0, fmt.Errorf("field %s had non-numeric type %s", key, val.Type)
-	}
-	return val.Num, nil
-}
-
-type FenceData struct {
-	H3Indexes []string `json:"h3Indexes"`
 }
 
 func (g *Privacy) getFence(ctx goka.Context) []h3.H3Index {
@@ -112,16 +108,9 @@ func (g *Privacy) getFence(ctx goka.Context) []h3.H3Index {
 		return nil
 	}
 
-	event := val.(*CloudEvent)
-	fence := new(FenceData)
-
-	err := json.Unmarshal(event.Data, fence)
-	if err != nil {
-		return nil
-	}
-
-	out := make([]h3.H3Index, len(fence.H3Indexes))
-	for i, s := range fence.H3Indexes {
+	sIndexes := val.(*FenceEvent).Data.H3Indexes
+	out := make([]h3.H3Index, len(sIndexes))
+	for i, s := range sIndexes {
 		out[i] = h3.FromString(s)
 	}
 
