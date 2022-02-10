@@ -41,6 +41,7 @@ func (g *Privacy) processStatusEvent(ctx goka.Context, msg interface{}) {
 
 	sanitizeEvent(event, fence)
 
+	// Key should be the DIMO device id.
 	ctx.Emit(g.StatusOutput, ctx.Key(), event)
 }
 
