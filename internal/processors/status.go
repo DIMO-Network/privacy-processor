@@ -45,7 +45,7 @@ func (d *StatusData) UnmarshalJSON(data []byte) error {
 			if !ok {
 				return fmt.Errorf("longitude field was not a JSON number")
 			}
-			d.Latitude = &lngF
+			d.Longitude = &lngF
 		}
 		delete(d.Overflow, "longitude")
 	}
