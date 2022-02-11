@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./resources/docker/Dockerfile
+          file: ./resources/docker/Dockerfile.cgo
           push: true
           tags: dimozone/events-api:${{ steps.slug.outputs.sha7 }}, dimozone/events-api:latest
 
