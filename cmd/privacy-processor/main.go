@@ -26,7 +26,7 @@ func main() {
 	}
 
 	gokaConfig := goka.DefaultConfig()
-	gokaConfig.Version = sarama.V2_6_0_0
+	gokaConfig.Version = sarama.V2_8_1_0
 	gokaConfig.Producer.Partitioner = sarama.NewCustomPartitioner(
 		sarama.WithAbsFirst(),
 		sarama.WithCustomHashFunction(murmur2.New32),
