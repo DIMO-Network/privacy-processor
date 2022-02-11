@@ -27,7 +27,7 @@ func TestPrivacy(t *testing.T) {
 
 	p, _ := goka.NewProcessor([]string{}, fgg, goka.WithTester(gt))
 
-	go p.Run(context.TODO())
+	go p.Run(context.TODO()) //nolint
 
 	out := gt.NewQueueTracker(string(fg.StatusOutput))
 
