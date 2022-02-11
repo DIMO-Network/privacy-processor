@@ -1,0 +1,90 @@
+replicaCount: 1
+image:
+  repository: dimozone/privacy-processor
+  pullPolicy: IfNotPresent
+  tag: fb1b394
+imagePullSecrets: []
+nameOverride: ''
+fullnameOverride: ''
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ''
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1001
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - all
+env:
+  ENVIRONMENT: dev
+  LOG_LEVEL: info
+  SERVICE_NAME: privacy-processor
+  SWAGGER_BASE_URL: https://privacy-processor.dev.dimo.zone/v1/swagger
+  KAFKA_BROKERS: kafka-dev-dimo-kafka-kafka-brokers:9092
+  PRIVACY_PROCESSOR_CONSUMER_GROUP: privacy-processor
+  DEVICE_STATUS_TOPIC: topic.device.status
+  PRIVACY_FENCE_TOPIC: table.device.privacyfence
+  DEVICE_STATUS_PRIVATE_TOPIC: topic.device.status.private
+service:
+  type: ClusterIP
+  ports:
+    mon-http:
+      port: 8888
+      targetPort: mon-http
+      protocol: TCP
+    http:
+      port: 8080
+      targetPort: http
+      protocol: TCP
+ports:
+  - name: mon-http
+    containerPort: 8888
+    protocol: TCP
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/auth-tls-secret: ingress/cf-origin-ca
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: 'on'
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    nginx.ingress.kubernetes.io/cors-allow-origin: https://privacy-processor.dev.dimo.zone, https://app.dev.dimo.zone
+    external-dns.alpha.kubernetes.io/hostname: privacy-processor.dev.dimo.zone
+  hosts:
+    - host: privacy-processor.dev.dimo.zone
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podDisruptionBudget:
+  minAvailable: 0
+kafka:
+  clusterName: kafka-dev-dimo-kafka
+  topics:
+serviceMonitor:
+  enabled: true
+  path: /metrics
+  port: mon-http
+  interval: 30s

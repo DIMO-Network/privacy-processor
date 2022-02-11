@@ -1,0 +1,51 @@
+replicaCount: 2
+image:
+  repository: dimozone/privacy-processor
+  pullPolicy: IfNotPresent
+  tag: 0.1.1
+
+env:
+  ENVIRONMENT: prod
+  LOG_LEVEL: info
+  SERVICE_NAME: privacy-processor
+  SWAGGER_BASE_URL: https://privacy-processor.dimo.zone/v1/swagger
+  KAFKA_BROKERS: kafka-prod-dimo-kafka-kafka-brokers:9092
+  PRIVACY_PROCESSOR_CONSUMER_GROUP: privacy-processor
+  DEVICE_STATUS_TOPIC: topic.device.status
+  PRIVACY_FENCE_TOPIC: table.device.privacyfence
+  DEVICE_STATUS_PRIVATE_TOPIC: topic.device.status.private
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/auth-tls-secret: ingress/cf-origin-ca
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: 'on'
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    nginx.ingress.kubernetes.io/cors-allow-origin: https://app.dimo.zone
+    external-dns.alpha.kubernetes.io/hostname: privacy-processor.dimo.zone
+  hosts:
+    - host: privacy-processor.dimo.zone
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+resources:
+  limits:
+    cpu: 1
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podDisruptionBudget:
+  minAvailable: 1
+kafka:
+  clusterName: kafka-prod-dimo-kafka

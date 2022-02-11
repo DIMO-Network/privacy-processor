@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "privacy-processor.fullname" . }}
+  labels:
+    {{- include "privacy-processor.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+    {{- include "privacy-processor.selectorLabels" . | nindent 6 }}
+{{ toYaml .Values.podDisruptionBudget | indent 2 }}
