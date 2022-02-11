@@ -3,7 +3,7 @@ package processors
 import (
 	"github.com/lovoo/goka"
 	"github.com/rs/zerolog"
-	"github.com/uber/h3-go"
+	"github.com/uber/h3-go/v3"
 )
 
 type Privacy struct {
