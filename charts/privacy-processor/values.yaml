@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: dimozone/privacy-processor
   pullPolicy: IfNotPresent
-  tag: fb1b394
+  tag: 2c9c57f
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
@@ -82,7 +82,7 @@ podDisruptionBudget:
   minAvailable: 0
 kafka:
   clusterName: kafka-dev-dimo-kafka
-  topics:
+  topics: null
 serviceMonitor:
   enabled: true
   path: /metrics
