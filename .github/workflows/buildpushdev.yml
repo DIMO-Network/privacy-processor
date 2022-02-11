@@ -29,12 +29,12 @@ jobs:
           context: .
           file: ./resources/docker/Dockerfile.cgo
           push: true
-          tags: dimozone/events-api:${{ steps.slug.outputs.sha7 }}, dimozone/events-api:latest
+          tags: dimozone/privacy-processor:${{ steps.slug.outputs.sha7 }}, dimozone/privacy-processor:latest
 
       - name: Update Image Version in the related HelmChart values.yaml
         uses: fjogeleit/yaml-update-action@master
         with:
-          valueFile: 'charts/events-api/values.yaml'
+          valueFile: 'charts/privacy-processor/values.yaml'
           propertyPath: 'image.tag'
           value: ${{ steps.slug.outputs.sha7 }}
           branch: main
