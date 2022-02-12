@@ -1,5 +1,7 @@
 FROM golang:1.17.7-bullseye AS build
 
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential
+
 RUN useradd -u 10001 dimo
 
 WORKDIR /go/src/github.com/DIMO-INC/privacy-processor/
@@ -17,6 +19,8 @@ FROM debian:bullseye
 LABEL maintainer="DIMO <hello@dimo.zone>"
 
 WORKDIR /
+
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /etc/passwd /etc/passwd
