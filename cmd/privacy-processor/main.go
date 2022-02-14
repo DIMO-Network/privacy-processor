@@ -10,6 +10,7 @@ import (
 	"github.com/Jeffail/benthos/v3/lib/util/hash/murmur2"
 	"github.com/Shopify/sarama"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/lovoo/goka"
 	"github.com/rs/zerolog"
 )
@@ -46,6 +47,17 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create privacy processor")
 	}
+
+	web := fiber.New(fiber.Config{DisableStartupMessage: true})
+	web.Get("/health", func(ctx *fiber.Ctx) error {
+		return nil
+	})
+
+	go func() {
+		if err := web.Listen(":4195"); err != nil {
+			log.Fatal().Err(err).Msg("Failed to start web server")
+		}
+	}()
 
 	if err := p.Run(context.Background()); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start privacy processor")

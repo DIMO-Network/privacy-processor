@@ -34,20 +34,32 @@ service:
   type: ClusterIP
   ports:
     mon-http:
-      port: 8888
+      port: 4195
       targetPort: mon-http
-      protocol: TCP
-    http:
-      port: 8080
-      targetPort: http
       protocol: TCP
 ports:
   - name: mon-http
-    containerPort: 8888
+    containerPort: 4195
     protocol: TCP
-  - name: http
-    containerPort: 8080
-    protocol: TCP
+livenessProbe:
+  httpGet:
+    path: /ping
+    port: mon-http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: mon-http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
 ingress:
   enabled: true
   className: nginx
