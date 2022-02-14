@@ -49,7 +49,7 @@ func main() {
 	}
 
 	web := fiber.New(fiber.Config{DisableStartupMessage: true})
-	web.Get("/health", func(ctx *fiber.Ctx) error {
+	web.Get("/", func(ctx *fiber.Ctx) error {
 		return nil
 	})
 

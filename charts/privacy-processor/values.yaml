@@ -43,7 +43,7 @@ ports:
     protocol: TCP
 livenessProbe:
   httpGet:
-    path: /ping
+    path: /
     port: mon-http
   initialDelaySeconds: 5
   periodSeconds: 10
@@ -52,7 +52,7 @@ livenessProbe:
   successThreshold: 1
 readinessProbe:
   httpGet:
-    path: /ready
+    path: /
     port: mon-http
   initialDelaySeconds: 10
   periodSeconds: 10
