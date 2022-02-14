@@ -54,10 +54,13 @@ func main() {
 	})
 
 	go func() {
+		log.Info().Msg("Listening for health check on port 4195")
 		if err := web.Listen(":4195"); err != nil {
 			log.Fatal().Err(err).Msg("Failed to start web server")
 		}
 	}()
+
+	log.Info().Msgf("Starting privacy processor, reading from %s", settings.DeviceStatusTopic)
 
 	if err := p.Run(context.Background()); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start privacy processor")
