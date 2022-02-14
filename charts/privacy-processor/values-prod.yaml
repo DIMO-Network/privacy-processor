@@ -3,7 +3,6 @@ image:
   repository: dimozone/privacy-processor
   pullPolicy: IfNotPresent
   tag: 0.1.1
-
 env:
   ENVIRONMENT: prod
   LOG_LEVEL: info
@@ -14,7 +13,6 @@ env:
   DEVICE_STATUS_TOPIC: topic.device.status
   PRIVACY_FENCE_TOPIC: table.device.privacyfence
   DEVICE_STATUS_PRIVATE_TOPIC: topic.device.status.private
-
 ingress:
   enabled: true
   className: nginx
