@@ -14,7 +14,7 @@ env:
   PRIVACY_FENCE_TOPIC: table.device.privacyfence
   DEVICE_STATUS_PRIVATE_TOPIC: topic.device.status.private
 ingress:
-  enabled: true
+  enabled: false
   className: nginx
   annotations:
     nginx.ingress.kubernetes.io/auth-tls-secret: ingress/cf-origin-ca
