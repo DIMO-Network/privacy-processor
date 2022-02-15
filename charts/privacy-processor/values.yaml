@@ -60,7 +60,7 @@ readinessProbe:
   failureThreshold: 3
   successThreshold: 1
 ingress:
-  enabled: true
+  enabled: false
   className: nginx
   annotations:
     nginx.ingress.kubernetes.io/auth-tls-secret: ingress/cf-origin-ca
