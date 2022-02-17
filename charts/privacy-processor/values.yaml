@@ -24,7 +24,6 @@ env:
   ENVIRONMENT: dev
   LOG_LEVEL: info
   SERVICE_NAME: privacy-processor
-  SWAGGER_BASE_URL: https://privacy-processor.dev.dimo.zone/v1/swagger
   KAFKA_BROKERS: kafka-dev-dimo-kafka-kafka-brokers:9092
   PRIVACY_PROCESSOR_CONSUMER_GROUP: privacy-processor
   DEVICE_STATUS_TOPIC: topic.device.status
