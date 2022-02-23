@@ -33,6 +33,8 @@ func main() {
 		sarama.WithCustomHashFunction(murmur2.New32),
 	)
 
+	goka.ReplaceGlobalConfig(gokaConfig)
+
 	fg := processors.Privacy{
 		Group:        goka.Group(settings.PrivacyProcessorConsumerGroup),
 		StatusInput:  goka.Stream(settings.DeviceStatusTopic),
