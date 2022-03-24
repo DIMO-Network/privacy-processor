@@ -7,8 +7,8 @@ import (
 
 	"github.com/DIMO-Network/privacy-processor/internal/config"
 	"github.com/DIMO-Network/privacy-processor/internal/processors"
-	"github.com/Jeffail/benthos/v3/lib/util/hash/murmur2"
 	"github.com/Shopify/sarama"
+	"github.com/burdiyan/kafkautil"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lovoo/goka"
@@ -28,10 +28,6 @@ func main() {
 
 	gokaConfig := goka.DefaultConfig()
 	gokaConfig.Version = sarama.V2_8_1_0
-	gokaConfig.Producer.Partitioner = sarama.NewCustomPartitioner(
-		sarama.WithAbsFirst(),
-		sarama.WithCustomHashFunction(murmur2.New32),
-	)
 
 	goka.ReplaceGlobalConfig(gokaConfig)
 
@@ -45,7 +41,7 @@ func main() {
 
 	fgg := fg.Define()
 
-	p, err := goka.NewProcessor(strings.Split(settings.KafkaBrokers, ","), fgg)
+	p, err := goka.NewProcessor(strings.Split(settings.KafkaBrokers, ","), fgg, goka.WithHasher(kafkautil.MurmurHasher))
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create privacy processor")
 	}

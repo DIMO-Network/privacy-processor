@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/Shopify/sarama v1.30.1
+	github.com/burdiyan/kafkautil v0.0.0-20190131162249-eaf83ed22d5b
 	github.com/lovoo/goka v1.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.26.1
@@ -13,10 +14,15 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/avast/retry-go v3.0.0+incompatible // indirect
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
 	github.com/jcmturner/gokrb5/v8 v8.4.2 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
+	github.com/onsi/ginkgo v1.16.4 // indirect
+	github.com/onsi/gomega v1.17.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.33.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
@@ -24,7 +30,6 @@ require (
 )
 
 require (
-	github.com/Jeffail/benthos/v3 v3.63.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
