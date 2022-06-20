@@ -1,8 +1,9 @@
 module github.com/DIMO-Network/privacy-processor
 
-go 1.17
+go 1.18
 
 require (
+	github.com/DIMO-Network/shared v0.2.2
 	github.com/Shopify/sarama v1.32.0
 	github.com/burdiyan/kafkautil v0.0.0-20190131162249-eaf83ed22d5b
 	github.com/lovoo/goka v1.1.2
@@ -15,6 +16,12 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/avast/retry-go v3.0.0+incompatible // indirect
+	github.com/avast/retry-go/v4 v4.0.3 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.16.5 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.12 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/kms v1.17.3 // indirect
+	github.com/aws/smithy-go v1.11.3 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect

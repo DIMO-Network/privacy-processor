@@ -7,24 +7,46 @@ import (
 
 	"github.com/DIMO-Network/privacy-processor/internal/config"
 	"github.com/DIMO-Network/privacy-processor/internal/processors"
+	"github.com/DIMO-Network/shared"
 	"github.com/Shopify/sarama"
 	"github.com/burdiyan/kafkautil"
+	"github.com/rs/zerolog"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lovoo/goka"
-	"github.com/rs/zerolog"
 )
 
+func serveMonitoring(port string, logger *zerolog.Logger) {
+	logger.Info().Msg("Listening for health check on port " + port)
+
+	web := fiber.New(fiber.Config{DisableStartupMessage: true})
+	web.Get("/", func(ctx *fiber.Ctx) error {
+		return nil
+	})
+
+	if err := web.Listen(":" + port); err != nil {
+		logger.Fatal().Err(err).Msg("Failed to start monitoring server on port " + port)
+	}
+}
+
 func main() {
-	log := zerolog.New(os.Stdout).With().
+	logger := zerolog.New(os.Stdout).With().
 		Timestamp().
 		Str("app", "privacy-processor").
 		Logger()
 
-	settings, err := config.LoadConfig("settings.yaml")
+	settings, err := shared.LoadConfig[config.Settings]("settings.yaml")
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to load config file")
+		logger.Fatal().Err(err).Msg("could not load settings")
 	}
+
+	logLevel, err := zerolog.ParseLevel(settings.LogLevel)
+	if err != nil {
+		logger.Fatal().Err(err).Msgf("Couldn't parse log level %q, terminating", settings.LogLevel)
+	}
+	zerolog.SetGlobalLevel(logLevel)
+
+	go serveMonitoring(settings.Port, &logger)
 
 	gokaConfig := goka.DefaultConfig()
 	gokaConfig.Version = sarama.V2_8_1_0
@@ -36,14 +58,14 @@ func main() {
 		StatusInput:  goka.Stream(settings.DeviceStatusTopic),
 		FenceTable:   goka.Table(settings.PrivacyFenceTopic),
 		StatusOutput: goka.Stream(settings.DeviceStatusPrivateTopic),
-		Logger:       &log,
+		Logger:       &logger,
 	}
 
 	fgg := fg.Define()
 
 	p, err := goka.NewProcessor(strings.Split(settings.KafkaBrokers, ","), fgg, goka.WithHasher(kafkautil.MurmurHasher))
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to create privacy processor")
+		logger.Fatal().Err(err).Msg("Failed to create privacy processor")
 	}
 
 	web := fiber.New(fiber.Config{DisableStartupMessage: true})
@@ -51,18 +73,11 @@ func main() {
 		return nil
 	})
 
-	go func() {
-		log.Info().Msg("Listening for health check on port 8888")
-		if err := web.Listen(":8888"); err != nil {
-			log.Fatal().Err(err).Msg("Failed to start web server")
-		}
-	}()
-
-	log.Info().Msg("Starting privacy processor")
-	log.Info().Msgf("Input topic %s, joining with table %s", settings.DeviceStatusTopic, settings.PrivacyFenceTopic)
-	log.Info().Msgf("Output topic %s", settings.DeviceStatusPrivateTopic)
+	logger.Info().Msg("Starting privacy processor")
+	logger.Info().Msgf("Input topic %s, joining with table %s", settings.DeviceStatusTopic, settings.PrivacyFenceTopic)
+	logger.Info().Msgf("Output topic %s", settings.DeviceStatusPrivateTopic)
 
 	if err := p.Run(context.Background()); err != nil {
-		log.Fatal().Err(err).Msg("Failed to start privacy processor")
+		logger.Fatal().Err(err).Msg("Failed to start privacy processor")
 	}
 }

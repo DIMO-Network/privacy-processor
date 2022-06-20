@@ -22,6 +22,7 @@ securityContext:
       - all
 env:
   ENVIRONMENT: dev
+  PORT: '8888'
   LOG_LEVEL: info
   SERVICE_NAME: privacy-processor
   KAFKA_BROKERS: kafka-dev-dimo-kafka-kafka-brokers:9092
