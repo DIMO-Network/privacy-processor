@@ -33,12 +33,12 @@ service:
   type: ClusterIP
   ports:
     mon-http:
-      port: 4195
+      port: 8888
       targetPort: mon-http
       protocol: TCP
 ports:
   - name: mon-http
-    containerPort: 4195
+    containerPort: 8888
     protocol: TCP
 livenessProbe:
   httpGet:

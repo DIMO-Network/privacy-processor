@@ -52,8 +52,8 @@ func main() {
 	})
 
 	go func() {
-		log.Info().Msg("Listening for health check on port 4195")
-		if err := web.Listen(":4195"); err != nil {
+		log.Info().Msg("Listening for health check on port 8888")
+		if err := web.Listen(":8888"); err != nil {
 			log.Fatal().Err(err).Msg("Failed to start web server")
 		}
 	}()

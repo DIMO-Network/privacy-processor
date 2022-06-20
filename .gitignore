@@ -1,3 +1,4 @@
 settings.yaml
 bin/
 target/
+.vscode/
