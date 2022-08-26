@@ -95,7 +95,7 @@ kafka:
   clusterName: kafka-dev-dimo-kafka
   topics: null
 serviceMonitor:
-  enabled: true
+  enabled: false
   path: /metrics
   port: mon-http
   interval: 30s
