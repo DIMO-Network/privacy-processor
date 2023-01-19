@@ -45,8 +45,6 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ include "privacy-processor.fullname" . }}-config
-          - secretRef:
-              name: {{ include "privacy-processor.fullname" . }}-secret
           ports:
 {{ toYaml .Values.ports | indent 12 }}
           livenessProbe:
