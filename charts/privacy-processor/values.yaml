@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: dimozone/privacy-processor
   pullPolicy: IfNotPresent
-  tag: c9cd2e6
+  tag: 8a2db12
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
