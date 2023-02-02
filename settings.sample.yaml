@@ -3,3 +3,6 @@ PRIVACY_PROCESSOR_CONSUMER_GROUP: privacy-processor
 DEVICE_STATUS_TOPIC: topic.device.status
 PRIVACY_FENCE_TOPIC: table.device.privacyfence
 DEVICE_STATUS_PRIVATE_TOPIC: topic.device.status.private
+ENVIRONMENT: local
+PORT: 3000
+LOG_LEVEL: info
