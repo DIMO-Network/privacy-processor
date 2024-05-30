@@ -6,9 +6,10 @@ import (
 )
 
 type StatusData struct {
-	Latitude  *float64               `json:"latitude"`
-	Longitude *float64               `json:"longitude"`
-	Overflow  map[string]interface{} `json:"-"`
+	Latitude   *float64       `json:"latitude"`
+	Longitude  *float64       `json:"longitude"`
+	IsRedacted *bool          `json:"isRedacted"`
+	Overflow   map[string]any `json:"-"`
 }
 
 func (d *StatusData) MarshalJSON() ([]byte, error) {
@@ -18,6 +19,10 @@ func (d *StatusData) MarshalJSON() ([]byte, error) {
 
 	if d.Longitude != nil {
 		d.Overflow["longitude"] = d.Longitude
+	}
+
+	if d.IsRedacted != nil {
+		d.Overflow["isRedacted"] = *d.IsRedacted
 	}
 
 	return json.Marshal(d.Overflow)
@@ -48,6 +53,17 @@ func (d *StatusData) UnmarshalJSON(data []byte) error {
 			d.Longitude = &lngF
 		}
 		delete(d.Overflow, "longitude")
+	}
+
+	if ir, ok := d.Overflow["isRedacted"]; ok {
+		if ir != nil {
+			irB, ok := ir.(bool)
+			if !ok {
+				return fmt.Errorf("isRedacted field was not a JSON boolean")
+			}
+			d.IsRedacted = &irB
+		}
+		delete(d.Overflow, "isRedacted")
 	}
 
 	return nil

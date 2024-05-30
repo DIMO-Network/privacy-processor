@@ -60,10 +60,15 @@ func sanitizeEvent(event *StatusEvent, fence []h3.H3Index) {
 		statusInd := h3.FromGeo(geo, res)
 		if statusInd == fenceInd {
 			outGeo := h3.ToGeo(h3.ToParent(statusInd, res-1))
+
 			event.Data.Latitude, event.Data.Longitude = &outGeo.Latitude, &outGeo.Longitude
-			break
+			event.Data.IsRedacted = ref(true)
+
+			return
 		}
 	}
+
+	event.Data.IsRedacted = ref(false)
 }
 
 func (g *Privacy) getFence(ctx goka.Context) []h3.H3Index {
@@ -79,4 +84,8 @@ func (g *Privacy) getFence(ctx goka.Context) []h3.H3Index {
 	}
 
 	return out
+}
+
+func ref[A any](a A) *A {
+	return &a
 }
