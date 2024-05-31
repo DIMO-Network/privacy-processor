@@ -68,8 +68,3 @@ func (d *StatusData) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
-
-type StatusEvent struct {
-	CloudEvent
-	Data StatusData `json:"data"`
-}

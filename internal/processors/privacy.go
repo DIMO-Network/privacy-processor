@@ -1,9 +1,10 @@
 package processors
 
 import (
+	"github.com/DIMO-Network/shared"
 	"github.com/lovoo/goka"
 	"github.com/rs/zerolog"
-	"github.com/uber/h3-go/v3"
+	"github.com/uber/h3-go/v4"
 )
 
 type Privacy struct {
@@ -19,25 +20,17 @@ type FenceData struct {
 	H3Indexes []string `json:"h3Indexes"`
 }
 
-type FenceEvent struct {
-	CloudEvent
-	Data FenceData `json:"data"`
-}
-
-var StatusCodec = &JSONCodec{Factory: func() interface{} { return new(StatusEvent) }}
-var FenceCodec = &JSONCodec{Factory: func() interface{} { return new(FenceEvent) }}
-
 func (g *Privacy) Define() *goka.GroupGraph {
 	return goka.DefineGroup(g.Group,
-		goka.Input(g.StatusInput, StatusCodec, g.processStatusEvent),
-		goka.Join(g.FenceTable, FenceCodec),
-		goka.Output(g.StatusOutput, StatusCodec),
+		goka.Input(g.StatusInput, new(shared.JSONCodec[shared.CloudEvent[StatusData]]), g.processStatusEvent),
+		goka.Join(g.FenceTable, new(shared.JSONCodec[shared.CloudEvent[FenceData]])),
+		goka.Output(g.StatusOutput, new(shared.JSONCodec[shared.CloudEvent[StatusData]])),
 	)
 }
 
 func (g *Privacy) processStatusEvent(ctx goka.Context, msg interface{}) {
 	fence := g.getFence(ctx)
-	event := msg.(*StatusEvent)
+	event := msg.(*shared.CloudEvent[StatusData])
 
 	sanitizeEvent(event, fence)
 
@@ -46,22 +39,22 @@ func (g *Privacy) processStatusEvent(ctx goka.Context, msg interface{}) {
 }
 
 // sanitizeEvent modifies the given CloudEvent using fence.
-func sanitizeEvent(event *StatusEvent, fence []h3.H3Index) {
+func sanitizeEvent(event *shared.CloudEvent[StatusData], fence []h3.Cell) {
 	if event.Data.Latitude == nil || event.Data.Longitude == nil {
 		return
 	}
 
-	geo := h3.GeoCoord{Latitude: *event.Data.Latitude, Longitude: *event.Data.Longitude}
+	geo := h3.NewLatLng(*event.Data.Latitude, *event.Data.Longitude)
 
 	for _, fenceInd := range fence {
 		// TODO: Should really validate res more.
-		res := h3.Resolution(fenceInd)
+		res := fenceInd.Resolution()
 		// TODO: Cache these.
-		statusInd := h3.FromGeo(geo, res)
+		statusInd := h3.LatLngToCell(geo, res)
 		if statusInd == fenceInd {
-			outGeo := h3.ToGeo(h3.ToParent(statusInd, res-1))
+			outGeo := statusInd.Parent(res - 1).LatLng()
 
-			event.Data.Latitude, event.Data.Longitude = &outGeo.Latitude, &outGeo.Longitude
+			event.Data.Latitude, event.Data.Longitude = &outGeo.Lat, &outGeo.Lng
 			event.Data.IsRedacted = ref(true)
 
 			return
@@ -71,16 +64,16 @@ func sanitizeEvent(event *StatusEvent, fence []h3.H3Index) {
 	event.Data.IsRedacted = ref(false)
 }
 
-func (g *Privacy) getFence(ctx goka.Context) []h3.H3Index {
+func (g *Privacy) getFence(ctx goka.Context) []h3.Cell {
 	val := ctx.Join(g.FenceTable)
 	if val == nil {
 		return nil
 	}
 
-	sIndexes := val.(*FenceEvent).Data.H3Indexes
-	out := make([]h3.H3Index, len(sIndexes))
+	sIndexes := val.(*shared.CloudEvent[FenceData]).Data.H3Indexes
+	out := make([]h3.Cell, len(sIndexes))
 	for i, s := range sIndexes {
-		out[i] = h3.FromString(s)
+		out[i] = h3.Cell(h3.IndexFromString(s))
 	}
 
 	return out
