@@ -20,7 +20,7 @@ func serveMonitoring(port string, logger *zerolog.Logger) {
 	logger.Info().Msg("Listening for health check on port " + port)
 
 	web := fiber.New(fiber.Config{DisableStartupMessage: true})
-	web.Get("/", func(ctx *fiber.Ctx) error {
+	web.Get("/", func(_ *fiber.Ctx) error {
 		return nil
 	})
 
@@ -69,7 +69,7 @@ func main() {
 	}
 
 	web := fiber.New(fiber.Config{DisableStartupMessage: true})
-	web.Get("/", func(ctx *fiber.Ctx) error {
+	web.Get("/", func(_ *fiber.Ctx) error {
 		return nil
 	})
 

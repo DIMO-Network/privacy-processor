@@ -9,8 +9,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func ref(x float64) *float64 { return &x }
-
 func TestPrivacy(t *testing.T) {
 	gt := tester.New(t)
 	log := zerolog.Nop()
@@ -59,6 +57,10 @@ func TestPrivacy(t *testing.T) {
 				*event.Data.Latitude, *event.Data.Longitude,
 			)
 		}
+
+		if *event.Data.IsRedacted != true {
+			t.Errorf("Expected isRedacted to be true")
+		}
 	})
 
 	t.Run("OutsideFence", func(t *testing.T) {
@@ -82,6 +84,10 @@ func TestPrivacy(t *testing.T) {
 				42.261123478313145, -83.68613574673722,
 				*event.Data.Latitude, *event.Data.Longitude,
 			)
+		}
+
+		if *event.Data.IsRedacted != false {
+			t.Errorf("Expected isRedacted to be false")
 		}
 	})
 
