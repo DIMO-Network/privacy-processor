@@ -10,4 +10,7 @@ type Settings struct {
 	DeviceStatusTopic             string `yaml:"DEVICE_STATUS_TOPIC"`
 	PrivacyFenceTopic             string `yaml:"PRIVACY_FENCE_TOPIC"`
 	DeviceStatusPrivateTopic      string `yaml:"DEVICE_STATUS_PRIVATE_TOPIC"`
+	// V2
+	DeviceStatusTopicV2        string `yaml:"DEVICE_STATUS_TOPIC_V2"`
+	DeviceStatusPrivateTopicV2 string `yaml:"DEVICE_STATUS_PRIVATE_TOPIC_V2"`
 }

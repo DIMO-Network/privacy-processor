@@ -1,0 +1,168 @@
+{
+  "id": "2fTHzFprm48YzWrOuaMa3wiraWo",
+  "source": "aftermarket/device/status",
+  "specversion": "2.0",
+  "subject": "0x98D78d711C0ec544F6fb5d54fcf6559CF41546a9",
+  "time": "2024-04-22T20:40:07.249022183Z",
+  "type": "com.dimo.device.status",
+  "vehicleTokenId": 635,
+  "userDeviceId": "2fbaXmHpdQiKyAH6o5hHTCYwU0U",
+  "make": "VW",
+  "model": "passat",
+  "year": 2016,
+  "data": {
+    "timestamp": 1713818407248,
+    "device": {
+      "rpiUptimeSecs": 116,
+      "batteryVoltage": 13.9,
+      "softwareVersion": "v1.0.0",
+      "hwVersion": "7",
+      "imei": "353338970358112",
+      "serial": "60d4af69-86e8-b790-02d3-c0a9dc4d6c8a"
+    },
+    "vehicle": {
+      "signals": [
+        {
+          "timestamp": 1713818384653,
+          "name": "vehicleSpeed",
+          "value": 42
+        },
+        {
+          "timestamp": 1713818384904,
+          "name": "engineLoad",
+          "value": 12.54912
+        },
+        {
+          "timestamp": 1713818385104,
+          "name": "shortFuelTrim",
+          "value": 12.5
+        },
+        {
+          "timestamp": 1713818385284,
+          "name": "commandedEgr",
+          "value": 50.19607843137254
+        },
+        {
+          "timestamp": 1713818387883,
+          "name": "throttlePosition",
+          "value": 0
+        },
+        {
+          "timestamp": 1713818388065,
+          "name": "intakeTemp",
+          "value": 15
+        },
+        {
+          "timestamp": 1713818388245,
+          "name": "intakePressure",
+          "value": 32
+        },
+        {
+          "timestamp": 1713818390865,
+          "name": "rpm",
+          "value": 7117.75
+        },
+        {
+          "timestamp": 1713818393810,
+          "name": "coolantTemp",
+          "value": 215
+        },
+        {
+          "timestamp": 1713818393982,
+          "name": "throttlePosition",
+          "value": 0
+        },
+        {
+          "timestamp": 1713818394167,
+          "name": "runTime",
+          "value": 1482
+        },
+        {
+          "timestamp": 1713818396772,
+          "name": "maf",
+          "value": 655.35
+        },
+        {
+          "timestamp": 1713818396972,
+          "name": "rpm",
+          "value": 7117.75
+        },
+        {
+          "timestamp": 1713818397167,
+          "name": "vehicleSpeed",
+          "value": 42
+        },
+        {
+          "timestamp": 1713818397345,
+          "name": "engineLoad",
+          "value": 12.54912
+        },
+        {
+          "timestamp": 1713818397542,
+          "name": "shortFuelTrim",
+          "value": 12.5
+        },
+        {
+          "timestamp": 1713818400177,
+          "name": "throttlePosition",
+          "value": 0
+        },
+        {
+          "timestamp": 1713818400367,
+          "name": "intakeTemp",
+          "value": 15
+        },
+        {
+          "timestamp": 1713818400557,
+          "name": "intakePressure",
+          "value": 32
+        },
+        {
+          "timestamp": 1713818403209,
+          "name": "rpm",
+          "value": 7117.75
+        },
+        {
+          "timestamp": 1713818405789,
+          "name": "throttlePosition",
+          "value": 0
+        },
+        {
+          "timestamp": 1713818405974,
+          "name": "commandedEgr",
+          "value": 50.19607843137254
+        },
+        {
+          "timestamp": 1713818407248,
+          "name": "longitude",
+          "value": -83.71029708818693
+        },
+        {
+          "timestamp": 1713818407248,
+          "name": "latitude",
+          "value": 42.26172693660968
+        },
+        {
+          "timestamp": 1713818407248,
+          "name": "hdop",
+          "value": 0.8
+        },
+        {
+          "timestamp": 1713818407248,
+          "name": "nsat",
+          "value": 0
+        },
+        {
+          "timestamp": 1713818407248,
+          "name": "wpa_state",
+          "value": "COMPLETED"
+        },
+        {
+          "timestamp": 1713818407248,
+          "name": "ssid",
+          "value": "Amplified"
+        }
+      ]
+    }
+  }
+}

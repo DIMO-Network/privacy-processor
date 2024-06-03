@@ -30,6 +30,8 @@ env:
   DEVICE_STATUS_TOPIC: topic.device.status
   PRIVACY_FENCE_TOPIC: table.device.privacyfence
   DEVICE_STATUS_PRIVATE_TOPIC: topic.device.status.private
+  DEVICE_STATUS_TOPIC_V2: topic.device.status.v2
+  DEVICE_STATUS_PRIVATE_TOPIC_V2: topic.device.status.private.v2
 service:
   type: ClusterIP
   ports:
