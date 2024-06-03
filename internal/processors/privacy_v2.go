@@ -1,9 +1,10 @@
 package processors
 
 import (
+	"github.com/DIMO-Network/shared"
 	"github.com/lovoo/goka"
 	"github.com/rs/zerolog"
-	"github.com/uber/h3-go/v3"
+	"github.com/uber/h3-go/v4"
 )
 
 type PrivacyV2 struct {
@@ -15,13 +16,11 @@ type PrivacyV2 struct {
 	Logger *zerolog.Logger
 }
 
-var StatusV2Codec = &JSONCodec{Factory: func() interface{} { return new(StatusEventV2[StatusV2Data]) }}
-
 func (g *PrivacyV2) DefineV2() *goka.GroupGraph {
 	return goka.DefineGroup(g.Group,
-		goka.Input(g.StatusInput, StatusV2Codec, g.processStatusEventV2),
-		goka.Join(g.FenceTable, FenceCodec),
-		goka.Output(g.StatusOutput, StatusV2Codec),
+		goka.Input(g.StatusInput, new(shared.JSONCodec[StatusEventV2[StatusV2Data]]), g.processStatusEventV2),
+		goka.Join(g.FenceTable, new(shared.JSONCodec[shared.CloudEvent[FenceData]])),
+		goka.Output(g.StatusOutput, new(shared.JSONCodec[StatusEventV2[StatusV2Data]])),
 	)
 }
 
@@ -36,7 +35,7 @@ func (g *PrivacyV2) processStatusEventV2(ctx goka.Context, msg interface{}) {
 }
 
 // sanitizeEventV2 modifies the given CloudEvent using fence.
-func sanitizeEventV2(event *StatusEventV2[StatusV2Data], fence []h3.H3Index) {
+func sanitizeEventV2(event *StatusEventV2[StatusV2Data], fence []h3.Cell) {
 	locationIndexesByTimestamp := findIndexPairsWithSameTimestamp(event.Data.Vehicle.Signals)
 
 	if len(locationIndexesByTimestamp) == 0 {
@@ -64,16 +63,16 @@ func sanitizeEventV2(event *StatusEventV2[StatusV2Data], fence []h3.H3Index) {
 			continue
 		}
 
-		geo := h3.GeoCoord{Latitude: latVal, Longitude: lngVal}
+		geo := h3.NewLatLng(latVal, lngVal)
 
 		for _, fenceInd := range fence {
-			res := h3.Resolution(fenceInd)
-			statusInd := h3.FromGeo(geo, res)
+			res := fenceInd.Resolution()
+			statusInd := h3.LatLngToCell(geo, res)
 			if statusInd == fenceInd {
-				outGeo := h3.ToGeo(h3.ToParent(statusInd, res-1))
+				outGeo := statusInd.Parent(res - 1).LatLng()
 
-				event.Data.Vehicle.Signals[latitudeIndx].Value = &outGeo.Latitude
-				event.Data.Vehicle.Signals[longitudeIndx].Value = &outGeo.Longitude
+				event.Data.Vehicle.Signals[latitudeIndx].Value = &outGeo.Lat
+				event.Data.Vehicle.Signals[longitudeIndx].Value = &outGeo.Lng
 				event.Data.IsRedacted = ref(true)
 
 				return
@@ -99,16 +98,16 @@ func findIndexPairsWithSameTimestamp(locationSignals []SignalData) map[int64]map
 	return result
 }
 
-func (g *PrivacyV2) getFenceV2(ctx goka.Context) []h3.H3Index {
+func (g *PrivacyV2) getFenceV2(ctx goka.Context) []h3.Cell {
 	val := ctx.Join(g.FenceTable)
 	if val == nil {
 		return nil
 	}
 
-	sIndexes := val.(*FenceEvent).Data.H3Indexes
-	out := make([]h3.H3Index, len(sIndexes))
+	sIndexes := val.(*shared.CloudEvent[FenceData]).Data.H3Indexes
+	out := make([]h3.Cell, len(sIndexes))
 	for i, s := range sIndexes {
-		out[i] = h3.FromString(s)
+		out[i] = h3.Cell(h3.IndexFromString(s))
 	}
 
 	return out

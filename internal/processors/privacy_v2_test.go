@@ -35,7 +35,7 @@ func TestPrivacyV2(t *testing.T) {
 
 	deviceID := "24c14Q2GGmXRT4JL0Gazu0MJ9XI"
 
-	gt.SetTableValue(fg.FenceTable, deviceID, &FenceEvent{Data: FenceData{
+	gt.SetTableValue(fg.FenceTable, deviceID, &shared.CloudEvent[FenceData]{Data: FenceData{
 		H3Indexes: []string{"872ab259affffff", "872ab259effffff"},
 	}})
 

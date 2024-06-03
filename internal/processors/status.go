@@ -70,11 +70,6 @@ func (d *StatusData) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type StatusEvent struct {
-	CloudEvent
-	Data StatusData `json:"data"`
-}
-
 type StatusEventV2[A any] struct {
 	shared.CloudEvent[A]
 	TokenID      uint64 `json:"vehicleTokenId"`
