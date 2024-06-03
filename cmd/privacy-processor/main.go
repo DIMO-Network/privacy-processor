@@ -8,12 +8,11 @@ import (
 	"github.com/DIMO-Network/privacy-processor/internal/config"
 	"github.com/DIMO-Network/privacy-processor/internal/processors"
 	"github.com/DIMO-Network/shared"
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/burdiyan/kafkautil"
-	"github.com/rs/zerolog"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/lovoo/goka"
+	"github.com/rs/zerolog"
 )
 
 func serveMonitoring(port string, logger *zerolog.Logger) {

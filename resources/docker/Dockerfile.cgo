@@ -1,4 +1,4 @@
-FROM golang:1.18 AS build
+FROM golang:1.22 AS build
 
 RUN useradd -u 10001 dimo
 
@@ -12,7 +12,7 @@ RUN go mod tidy
 RUN go mod vendor
 RUN make install
 
-FROM debian:bullseye
+FROM debian:bookworm
 
 LABEL maintainer="DIMO <hello@dimo.zone>"
 
