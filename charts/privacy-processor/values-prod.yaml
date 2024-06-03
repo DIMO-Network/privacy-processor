@@ -2,7 +2,7 @@ replicaCount: 2
 image:
   repository: dimozone/privacy-processor
   pullPolicy: IfNotPresent
-  tag: 0.1.4
+  tag: 0.2.0
 env:
   ENVIRONMENT: prod
   LOG_LEVEL: info
