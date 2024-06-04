@@ -188,8 +188,7 @@ func TestPrivacyV2(t *testing.T) {
 		decoder := json.NewDecoder(file)
 		err = decoder.Decode(&statusV2)
 		if err != nil {
-			fmt.Println("Error decoding JSON:", err)
-			return
+			t.Errorf("Error decoding JSON:", err)
 		}
 
 		gt.Consume(string(fg.StatusInput), deviceID, &statusV2)
