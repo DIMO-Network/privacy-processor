@@ -3,7 +3,6 @@ package processors
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/DIMO-Network/shared"
 	"os"
 	"testing"
@@ -87,7 +86,7 @@ func TestPrivacyV2(t *testing.T) {
 			)
 		}
 
-		if *event.Data.IsRedacted != true {
+		if event.Data.Vehicle.Signals[2].Value != true {
 			t.Errorf("Expected isRedacted to be true")
 		}
 	})
@@ -171,7 +170,7 @@ func TestPrivacyV2(t *testing.T) {
 			)
 		}
 
-		if *event.Data.IsRedacted != true {
+		if event.Data.Vehicle.Signals[6].Value != true {
 			t.Errorf("Expected isRedacted to be true")
 		}
 	})
@@ -179,7 +178,7 @@ func TestPrivacyV2(t *testing.T) {
 	t.Run("WithinFenceWithFullPayload", func(t *testing.T) {
 		file, err := os.Open("testdata/statusV2.json")
 		if err != nil {
-			fmt.Println("Error opening file:", err)
+			t.Errorf("Error opening file: %v", err)
 			return
 		}
 		defer file.Close()
@@ -188,7 +187,7 @@ func TestPrivacyV2(t *testing.T) {
 		decoder := json.NewDecoder(file)
 		err = decoder.Decode(&statusV2)
 		if err != nil {
-			t.Errorf("Error decoding JSON:", err)
+			t.Errorf("Error decoding JSON: %v", err)
 		}
 
 		gt.Consume(string(fg.StatusInput), deviceID, &statusV2)
@@ -212,7 +211,17 @@ func TestPrivacyV2(t *testing.T) {
 			)
 		}
 
-		if *event.Data.IsRedacted != true {
+		// unfenced location
+		lat = event.Data.Vehicle.Signals[27].Value.(float64)
+		lon = event.Data.Vehicle.Signals[26].Value.(float64)
+		if lat != 42.261123478313145 || lon != -83.68613574673722 {
+			t.Errorf("Expected %f, %f in the output but got %f, %f",
+				42.261123478313145, -83.68613574673722,
+				lat, lon,
+			)
+		}
+
+		if event.Data.Vehicle.Signals[32].Value != true {
 			t.Errorf("Expected isRedacted to be true")
 		}
 	})
@@ -269,8 +278,8 @@ func TestPrivacyV2(t *testing.T) {
 			t.Errorf("Expected TokenID to be %d", 12345)
 		}
 
-		if *event.Data.IsRedacted != false {
-			t.Errorf("Expected isRedacted to be false")
+		if event.Data.Vehicle.Signals[2].Value != false {
+			t.Errorf("Expected isRedacted to be true")
 		}
 	})
 }

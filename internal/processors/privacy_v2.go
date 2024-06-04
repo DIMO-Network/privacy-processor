@@ -73,13 +73,27 @@ func sanitizeEventV2(event *StatusEventV2[StatusV2Data], fence []h3.Cell) {
 
 				event.Data.Vehicle.Signals[latitudeIndx].Value = &outGeo.Lat
 				event.Data.Vehicle.Signals[longitudeIndx].Value = &outGeo.Lng
-				event.Data.IsRedacted = ref(true)
+
+				addIsRedactedSignal(event, event.Data.Vehicle.Signals[latitudeIndx].Timestamp, true)
 
 				return
 			}
 		}
-		event.Data.IsRedacted = ref(false)
+
+		addIsRedactedSignal(event, event.Data.Vehicle.Signals[latitudeIndx].Timestamp, false)
 	}
+}
+
+func addIsRedactedSignal(event *StatusEventV2[StatusV2Data], timestamp int64, isRedacted bool) {
+	// Create a new SignalData object for IsRedacted
+	isRedactedSignal := SignalData{
+		Timestamp: timestamp,
+		Name:      "IsRedacted",
+		Value:     *ref(isRedacted),
+	}
+
+	// Append the new signal to the Signals slice
+	event.Data.Vehicle.Signals = append(event.Data.Vehicle.Signals, isRedactedSignal)
 }
 
 // findIndexPairsWithSameTimestamp returns a map of timestamps to a map of signal names(long and lat ) to their index in the slice

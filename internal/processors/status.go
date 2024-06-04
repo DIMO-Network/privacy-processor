@@ -94,6 +94,4 @@ type StatusV2Data struct {
 	Timestamp int64                  `json:"timestamp"`
 	Device    map[string]interface{} `json:"device,omitempty"`
 	Vehicle   Vehicle                `json:"vehicle,omitempty"`
-	// IsRedacted is a flag to indicate if the location data was redacted
-	IsRedacted *bool `json:"isRedacted"`
 }

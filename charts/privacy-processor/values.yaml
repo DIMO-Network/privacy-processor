@@ -32,6 +32,7 @@ env:
   DEVICE_STATUS_PRIVATE_TOPIC: topic.device.status.private
   DEVICE_STATUS_TOPIC_V2: topic.device.status.v2
   DEVICE_STATUS_PRIVATE_TOPIC_V2: topic.device.status.private.v2
+  PRIVACY_PROCESSOR_CONSUMER_GROUP_V2: privacy-processor-v2
 service:
   type: ClusterIP
   ports:

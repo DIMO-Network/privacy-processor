@@ -153,6 +153,26 @@
           "value": 0
         },
         {
+          "timestamp": 1713818400177,
+          "name": "longitude",
+          "value": -83.68613574673722
+        },
+        {
+          "timestamp": 1713818400177,
+          "name": "latitude",
+          "value": 42.261123478313145
+        },
+        {
+          "timestamp": 1713818400177,
+          "name": "hdop",
+          "value": 0.8
+        },
+        {
+          "timestamp": 1713818400177,
+          "name": "nsat",
+          "value": 0
+        },
+        {
           "timestamp": 1713818407248,
           "name": "wpa_state",
           "value": "COMPLETED"
