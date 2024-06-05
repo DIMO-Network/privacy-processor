@@ -77,6 +77,7 @@ type StatusEventV2[A any] struct {
 	Make         string `json:"make"`
 	Model        string `json:"model"`
 	Year         int    `json:"year"`
+	Signature    string `json:"signature"`
 }
 
 type Vehicle struct {
