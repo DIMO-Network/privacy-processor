@@ -25,7 +25,7 @@ func (g *PrivacyV2) DefineV2() *goka.GroupGraph {
 }
 
 func (g *PrivacyV2) processStatusEventV2(ctx goka.Context, msg interface{}) {
-	fence := g.getFenceV2(ctx)
+	fence := getFence(ctx, g.FenceTable)
 	event := msg.(*StatusEventV2[StatusV2Data])
 
 	sanitizeEventV2(event, fence)
@@ -110,19 +110,4 @@ func findIndexPairsWithSameTimestamp(locationSignals []SignalData) map[int64]map
 	}
 
 	return result
-}
-
-func (g *PrivacyV2) getFenceV2(ctx goka.Context) []h3.Cell {
-	val := ctx.Join(g.FenceTable)
-	if val == nil {
-		return nil
-	}
-
-	sIndexes := val.(*shared.CloudEvent[FenceData]).Data.H3Indexes
-	out := make([]h3.Cell, len(sIndexes))
-	for i, s := range sIndexes {
-		out[i] = h3.Cell(h3.IndexFromString(s))
-	}
-
-	return out
 }
