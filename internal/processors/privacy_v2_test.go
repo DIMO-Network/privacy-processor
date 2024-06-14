@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/DIMO-Network/shared"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/lovoo/goka"
@@ -17,10 +18,10 @@ func TestPrivacyV2(t *testing.T) {
 	log := zerolog.Nop()
 
 	fg := PrivacyV2{
-		Group:        "privacy-processor",
-		StatusInput:  "topic.device.status",
-		FenceTable:   "table.device.privacyfence",
-		StatusOutput: "topic.device.status.private",
+		Group:        "privacy-processor-v2",
+		StatusInput:  "topic.device.status.v2",
+		FenceTable:   "table.device.privacyfence.v2",
+		StatusOutput: " topic.device.status.private.v2",
 		Logger:       &log,
 	}
 
@@ -32,9 +33,10 @@ func TestPrivacyV2(t *testing.T) {
 
 	out := gt.NewQueueTracker(string(fg.StatusOutput))
 
-	deviceID := "24c14Q2GGmXRT4JL0Gazu0MJ9XI"
+	vehicleTokenID := "3333"
+	tokenID, _ := strconv.Atoi(vehicleTokenID)
 
-	gt.SetTableValue(fg.FenceTable, deviceID, &shared.CloudEvent[FenceData]{Data: FenceData{
+	gt.SetTableValue(fg.FenceTable, vehicleTokenID, &shared.CloudEvent[FenceData]{Data: FenceData{
 		H3Indexes: []string{"872ab259affffff", "872ab259effffff"},
 	}})
 
@@ -59,21 +61,21 @@ func TestPrivacyV2(t *testing.T) {
 					},
 				},
 			},
-			TokenID:      12345,
+			TokenID:      uint64(tokenID),
 			UserDeviceID: "2fbaXmHpdQiKyAH6o5hHTCYwU0U",
 			Make:         "VW",
 			Model:        "passat",
 			Year:         2016,
 		}
 
-		gt.Consume(string(fg.StatusInput), deviceID, &statusV2)
+		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
 
 		key, value, valid := out.Next()
 		if !valid {
 			t.Error("No output")
 		}
-		if key != deviceID {
-			t.Errorf("Expected output to maintain the device ID %s as the key, but got %s", deviceID, key)
+		if key != vehicleTokenID {
+			t.Errorf("Expected output to maintain the token ID %s as the key, but got %s", vehicleTokenID, key)
 		}
 
 		event := value.(*StatusEventV2[StatusV2Data])
@@ -132,21 +134,21 @@ func TestPrivacyV2(t *testing.T) {
 					},
 				},
 			},
-			TokenID:      12345,
+			TokenID:      uint64(tokenID),
 			UserDeviceID: "2fbaXmHpdQiKyAH6o5hHTCYwU0U",
 			Make:         "VW",
 			Model:        "passat",
 			Year:         2016,
 		}
 
-		gt.Consume(string(fg.StatusInput), deviceID, &statusV2)
+		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
 
 		key, value, valid := out.Next()
 		if !valid {
 			t.Error("No output")
 		}
-		if key != deviceID {
-			t.Errorf("Expected output to maintain the device ID %s as the key, but got %s", deviceID, key)
+		if key != vehicleTokenID {
+			t.Errorf("Expected output to maintain the token ID %s as the key, but got %s", vehicleTokenID, key)
 		}
 
 		event := value.(*StatusEventV2[StatusV2Data])
@@ -190,14 +192,14 @@ func TestPrivacyV2(t *testing.T) {
 			t.Errorf("Error decoding JSON: %v", err)
 		}
 
-		gt.Consume(string(fg.StatusInput), deviceID, &statusV2)
+		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
 
 		key, value, valid := out.Next()
 		if !valid {
 			t.Error("No output")
 		}
-		if key != deviceID {
-			t.Errorf("Expected output to maintain the device ID %s as the key, but got %s", deviceID, key)
+		if key != vehicleTokenID {
+			t.Errorf("Expected output to maintain the token ID %s as the key, but got %s", vehicleTokenID, key)
 		}
 
 		event := value.(*StatusEventV2[StatusV2Data])
@@ -247,21 +249,21 @@ func TestPrivacyV2(t *testing.T) {
 					},
 				},
 			},
-			TokenID:      12345,
+			TokenID:      uint64(tokenID),
 			UserDeviceID: "2fbaXmHpdQiKyAH6o5hHTCYwU0U",
 			Make:         "VW",
 			Model:        "passat",
 			Year:         2016,
 		}
 
-		gt.Consume(string(fg.StatusInput), deviceID, &statusV2)
+		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
 
 		key, value, valid := out.Next()
 		if !valid {
 			t.Error("No output")
 		}
-		if key != deviceID {
-			t.Errorf("Expected output to maintain the device ID %s as the key, but got %s", deviceID, key)
+		if key != vehicleTokenID {
+			t.Errorf("Expected output to maintain the token ID %s as the key, but got %s", vehicleTokenID, key)
 		}
 
 		event := value.(*StatusEventV2[StatusV2Data])
@@ -274,8 +276,8 @@ func TestPrivacyV2(t *testing.T) {
 			)
 		}
 
-		if 12345 != event.TokenID {
-			t.Errorf("Expected TokenID to be %d", 12345)
+		if uint64(tokenID) != event.TokenID {
+			t.Errorf("Expected TokenID to be %d", tokenID)
 		}
 
 		if event.Data.Vehicle.Signals[2].Value != false {
