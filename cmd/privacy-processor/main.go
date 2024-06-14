@@ -84,7 +84,7 @@ func main() {
 	fgV2 := processors.PrivacyV2{
 		Group:        goka.Group(settings.PrivacyProcessorConsumerGroupV2),
 		StatusInput:  goka.Stream(settings.DeviceStatusTopicV2),
-		FenceTable:   goka.Table(settings.PrivacyFenceTopic),
+		FenceTable:   goka.Table(settings.PrivacyFenceTopicV2),
 		StatusOutput: goka.Stream(settings.DeviceStatusPrivateTopicV2),
 		Logger:       &logger,
 	}
