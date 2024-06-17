@@ -8,7 +8,6 @@ require (
 	github.com/burdiyan/kafkautil v0.0.0-20240215092415-7e6d3d0fc870
 	github.com/lovoo/goka v1.1.12
 	github.com/rs/zerolog v1.33.0
-	github.com/uber/h3-go/v3 v3.7.1
 	github.com/uber/h3-go/v4 v4.1.0
 )
 

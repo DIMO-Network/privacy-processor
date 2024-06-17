@@ -30,13 +30,13 @@ func (g *PrivacyV2) processStatusEventV2(ctx goka.Context, msg interface{}) {
 
 	sanitizeEventV2(event, fence)
 
-	// Key should be the DIMO device id.
+	// Key should be the DIMO vehicle token id.
 	ctx.Emit(g.StatusOutput, ctx.Key(), event)
 }
 
 // sanitizeEventV2 modifies the given CloudEvent using fence.
 func sanitizeEventV2(event *StatusEventV2[StatusV2Data], fence []h3.Cell) {
-	locationIndexesByTimestamp := findIndexPairsWithSameTimestamp(event.Data.Vehicle.Signals)
+	locationIndexesByTimestamp := findIndexForLocationPairsWithSameTimestamp(event.Data.Vehicle.Signals)
 
 	if len(locationIndexesByTimestamp) == 0 {
 		return
@@ -71,8 +71,8 @@ func sanitizeEventV2(event *StatusEventV2[StatusV2Data], fence []h3.Cell) {
 			if statusInd == fenceInd {
 				outGeo := statusInd.Parent(res - 1).LatLng()
 
-				event.Data.Vehicle.Signals[latitudeIndx].Value = &outGeo.Lat
-				event.Data.Vehicle.Signals[longitudeIndx].Value = &outGeo.Lng
+				event.Data.Vehicle.Signals[latitudeIndx].Value = outGeo.Lat
+				event.Data.Vehicle.Signals[longitudeIndx].Value = outGeo.Lng
 
 				addIsRedactedSignal(event, event.Data.Vehicle.Signals[latitudeIndx].Timestamp, true)
 
@@ -96,11 +96,11 @@ func addIsRedactedSignal(event *StatusEventV2[StatusV2Data], timestamp int64, is
 	event.Data.Vehicle.Signals = append(event.Data.Vehicle.Signals, isRedactedSignal)
 }
 
-// findIndexPairsWithSameTimestamp returns a map of timestamps to a map of signal names(long and lat ) to their index in the slice
-func findIndexPairsWithSameTimestamp(locationSignals []SignalData) map[int64]map[string]int {
+// findIndexForLocationPairsWithSameTimestamp returns a map of timestamps to a map of signal names(long and lat ) to their index in the slice
+func findIndexForLocationPairsWithSameTimestamp(signals []SignalData) map[int64]map[string]int {
 	result := make(map[int64]map[string]int)
 
-	for i, signal := range locationSignals {
+	for i, signal := range signals {
 		if signal.Name == "longitude" || signal.Name == "latitude" {
 			if _, ok := result[signal.Timestamp]; !ok {
 				result[signal.Timestamp] = make(map[string]int)

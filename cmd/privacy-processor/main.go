@@ -76,9 +76,11 @@ func main() {
 	logger.Info().Msgf("Input topic %s, joining with table %s", settings.DeviceStatusTopic, settings.PrivacyFenceTopic)
 	logger.Info().Msgf("Output topic %s", settings.DeviceStatusPrivateTopic)
 
-	if err := p.Run(context.Background()); err != nil {
-		logger.Fatal().Err(err).Msg("Failed to start privacy processor")
-	}
+	go func() {
+		if err := p.Run(context.Background()); err != nil {
+			logger.Fatal().Err(err).Msg("Failed to start privacy processor")
+		}
+	}()
 
 	// V2
 	fgV2 := processors.PrivacyV2{
