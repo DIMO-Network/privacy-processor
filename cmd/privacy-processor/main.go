@@ -76,7 +76,32 @@ func main() {
 	logger.Info().Msgf("Input topic %s, joining with table %s", settings.DeviceStatusTopic, settings.PrivacyFenceTopic)
 	logger.Info().Msgf("Output topic %s", settings.DeviceStatusPrivateTopic)
 
-	if err := p.Run(context.Background()); err != nil {
-		logger.Fatal().Err(err).Msg("Failed to start privacy processor")
+	go func() {
+		if err := p.Run(context.Background()); err != nil {
+			logger.Fatal().Err(err).Msg("Failed to start privacy processor")
+		}
+	}()
+
+	// V2
+	fgV2 := processors.PrivacyV2{
+		Group:        goka.Group(settings.PrivacyProcessorConsumerGroupV2),
+		StatusInput:  goka.Stream(settings.DeviceStatusTopicV2),
+		FenceTable:   goka.Table(settings.PrivacyFenceTopicV2),
+		StatusOutput: goka.Stream(settings.DeviceStatusPrivateTopicV2),
+		Logger:       &logger,
+	}
+
+	fggV2 := fgV2.DefineV2()
+	pV2, err := goka.NewProcessor(strings.Split(settings.KafkaBrokers, ","), fggV2, goka.WithHasher(kafkautil.MurmurHasher))
+	if err != nil {
+		logger.Fatal().Err(err).Msg("Failed to create privacy processor")
+	}
+
+	logger.Info().Msg("Starting privacy processor V2")
+	logger.Info().Msgf("Input topic %s, joining with table %s", settings.DeviceStatusTopicV2, settings.PrivacyFenceTopic)
+	logger.Info().Msgf("Output topic %s", settings.DeviceStatusPrivateTopicV2)
+
+	if err := pV2.Run(context.Background()); err != nil {
+		logger.Fatal().Err(err).Msg("Failed to start privacy processor V2")
 	}
 }

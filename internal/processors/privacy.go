@@ -29,7 +29,7 @@ func (g *Privacy) Define() *goka.GroupGraph {
 }
 
 func (g *Privacy) processStatusEvent(ctx goka.Context, msg interface{}) {
-	fence := g.getFence(ctx)
+	fence := getFence(ctx, g.FenceTable)
 	event := msg.(*shared.CloudEvent[StatusData])
 
 	sanitizeEvent(event, fence)
@@ -64,8 +64,8 @@ func sanitizeEvent(event *shared.CloudEvent[StatusData], fence []h3.Cell) {
 	event.Data.IsRedacted = ref(false)
 }
 
-func (g *Privacy) getFence(ctx goka.Context) []h3.Cell {
-	val := ctx.Join(g.FenceTable)
+func getFence(ctx goka.Context, fenceTable goka.Table) []h3.Cell {
+	val := ctx.Join(fenceTable)
 	if val == nil {
 		return nil
 	}

@@ -3,6 +3,7 @@ package processors
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/DIMO-Network/shared"
 )
 
 type StatusData struct {
@@ -67,4 +68,31 @@ func (d *StatusData) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+type StatusEventV2[A any] struct {
+	shared.CloudEvent[A]
+	TokenID      uint64 `json:"vehicleTokenId"`
+	UserDeviceID string `json:"userDeviceId"`
+	Make         string `json:"make"`
+	Model        string `json:"model"`
+	Year         int    `json:"year"`
+	Signature    string `json:"signature"`
+}
+
+type Vehicle struct {
+	Signals []SignalData `json:"signals,omitempty"`
+}
+
+type SignalData struct {
+	// Timestamp is in unix millis, when signal was queried
+	Timestamp int64  `json:"timestamp"`
+	Name      string `json:"name"`
+	Value     any    `json:"value"`
+}
+type StatusV2Data struct {
+	// Timestamp is in unix millis, when payload was sent
+	Timestamp int64                  `json:"timestamp"`
+	Device    map[string]interface{} `json:"device,omitempty"`
+	Vehicle   Vehicle                `json:"vehicle,omitempty"`
 }
