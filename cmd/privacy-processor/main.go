@@ -98,7 +98,7 @@ func main() {
 	}
 
 	logger.Info().Msg("Starting privacy processor V2")
-	logger.Info().Msgf("Input topic %s, joining with table %s", settings.DeviceStatusTopicV2, settings.PrivacyFenceTopic)
+	logger.Info().Msgf("Input topic %s, joining with table %s", settings.DeviceStatusTopicV2, settings.PrivacyFenceTopicV2)
 	logger.Info().Msgf("Output topic %s", settings.DeviceStatusPrivateTopicV2)
 
 	if err := pV2.Run(context.Background()); err != nil {

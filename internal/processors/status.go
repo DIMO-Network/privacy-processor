@@ -72,27 +72,26 @@ func (d *StatusData) UnmarshalJSON(data []byte) error {
 
 type StatusEventV2[A any] struct {
 	shared.CloudEvent[A]
-	TokenID      uint64 `json:"vehicleTokenId"`
-	UserDeviceID string `json:"userDeviceId"`
-	Make         string `json:"make"`
-	Model        string `json:"model"`
-	Year         int    `json:"year"`
-	Signature    string `json:"signature"`
+	TokenID   uint64 `json:"vehicleTokenId"`
+	Signature string `json:"signature"`
 }
 
 type Vehicle struct {
+	Make    string       `json:"make,omitempty"`
+	Model   string       `json:"model,omitempty"`
+	Year    int          `json:"year,omitempty"`
 	Signals []SignalData `json:"signals,omitempty"`
 }
 
 type SignalData struct {
 	// Timestamp is in unix millis, when signal was queried
-	Timestamp int64  `json:"timestamp"`
-	Name      string `json:"name"`
-	Value     any    `json:"value"`
+	Timestamp int64  `json:"timestamp,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Value     any    `json:"value,omitempty"`
 }
 type StatusV2Data struct {
 	// Timestamp is in unix millis, when payload was sent
-	Timestamp int64                  `json:"timestamp"`
+	Timestamp int64                  `json:"timestamp,omitempty"`
 	Device    map[string]interface{} `json:"device,omitempty"`
 	Vehicle   Vehicle                `json:"vehicle,omitempty"`
 }

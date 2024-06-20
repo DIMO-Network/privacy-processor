@@ -46,6 +46,9 @@ func TestPrivacyV2(t *testing.T) {
 				Data: StatusV2Data{
 					Timestamp: 1713818407248,
 					Vehicle: Vehicle{
+						Make:  "VW",
+						Model: "passat",
+						Year:  2016,
 						Signals: []SignalData{
 							{
 								Timestamp: 1713818407248,
@@ -59,13 +62,12 @@ func TestPrivacyV2(t *testing.T) {
 							},
 						},
 					},
+					Device: map[string]interface{}{
+						"userDeviceId": " 2fbaXmHpdQiKyAH6o5hHTCYwU0U",
+					},
 				},
 			},
-			TokenID:      uint64(tokenID),
-			UserDeviceID: "2fbaXmHpdQiKyAH6o5hHTCYwU0U",
-			Make:         "VW",
-			Model:        "passat",
-			Year:         2016,
+			TokenID: uint64(tokenID),
 		}
 
 		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
@@ -98,7 +100,13 @@ func TestPrivacyV2(t *testing.T) {
 			CloudEvent: shared.CloudEvent[StatusV2Data]{
 				Data: StatusV2Data{
 					Timestamp: 1713818407248,
+					Device: map[string]interface{}{
+						"userDeviceId": " 2fbaXmHpdQiKyAH6o5hHTCYwU0U",
+					},
 					Vehicle: Vehicle{
+						Make:  "VW",
+						Model: "passat",
+						Year:  2016,
 						Signals: []SignalData{
 							{
 								Timestamp: 1713818407248,
@@ -134,11 +142,7 @@ func TestPrivacyV2(t *testing.T) {
 					},
 				},
 			},
-			TokenID:      uint64(tokenID),
-			UserDeviceID: "2fbaXmHpdQiKyAH6o5hHTCYwU0U",
-			Make:         "VW",
-			Model:        "passat",
-			Year:         2016,
+			TokenID: uint64(tokenID),
 		}
 
 		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
@@ -233,7 +237,13 @@ func TestPrivacyV2(t *testing.T) {
 			CloudEvent: shared.CloudEvent[StatusV2Data]{
 				Data: StatusV2Data{
 					Timestamp: 1713818407248,
+					Device: map[string]interface{}{
+						"userDeviceId": " 2fbaXmHpdQiKyAH6o5hHTCYwU0U",
+					},
 					Vehicle: Vehicle{
+						Make:  "VW",
+						Model: "passat",
+						Year:  2016,
 						Signals: []SignalData{
 							{
 								Timestamp: 1713818407248,
@@ -249,11 +259,7 @@ func TestPrivacyV2(t *testing.T) {
 					},
 				},
 			},
-			TokenID:      uint64(tokenID),
-			UserDeviceID: "2fbaXmHpdQiKyAH6o5hHTCYwU0U",
-			Make:         "VW",
-			Model:        "passat",
-			Year:         2016,
+			TokenID: uint64(tokenID),
 		}
 
 		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
