@@ -3,7 +3,7 @@ module github.com/DIMO-Network/privacy-processor
 go 1.22
 
 require (
-	github.com/DIMO-Network/shared v0.10.17
+	github.com/DIMO-Network/shared v0.10.20
 	github.com/IBM/sarama v1.41.3
 	github.com/burdiyan/kafkautil v0.0.0-20240215092415-7e6d3d0fc870
 	github.com/lovoo/goka v1.1.12
