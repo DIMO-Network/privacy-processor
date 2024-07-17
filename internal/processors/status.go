@@ -3,6 +3,7 @@ package processors
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/DIMO-Network/shared"
 )
 
@@ -72,7 +73,6 @@ func (d *StatusData) UnmarshalJSON(data []byte) error {
 
 type StatusEventV2[A any] struct {
 	shared.CloudEvent[A]
-	TokenID   uint64 `json:"vehicleTokenId"`
 	Signature string `json:"signature"`
 }
 

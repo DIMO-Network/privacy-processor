@@ -3,11 +3,11 @@ package processors
 import (
 	"context"
 	"encoding/json"
-	"github.com/DIMO-Network/shared"
 	"os"
 	"strconv"
 	"testing"
 
+	"github.com/DIMO-Network/shared"
 	"github.com/lovoo/goka"
 	"github.com/lovoo/goka/tester"
 	"github.com/rs/zerolog"
@@ -66,8 +66,8 @@ func TestPrivacyV2(t *testing.T) {
 						"userDeviceId": " 2fbaXmHpdQiKyAH6o5hHTCYwU0U",
 					},
 				},
+				VehicleTokenID: uint32(tokenID),
 			},
-			TokenID: uint64(tokenID),
 		}
 
 		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
@@ -141,8 +141,8 @@ func TestPrivacyV2(t *testing.T) {
 						},
 					},
 				},
+				VehicleTokenID: uint32(tokenID),
 			},
-			TokenID: uint64(tokenID),
 		}
 
 		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
@@ -258,8 +258,8 @@ func TestPrivacyV2(t *testing.T) {
 						},
 					},
 				},
+				VehicleTokenID: uint32(tokenID),
 			},
-			TokenID: uint64(tokenID),
 		}
 
 		gt.Consume(string(fg.StatusInput), vehicleTokenID, &statusV2)
@@ -282,7 +282,7 @@ func TestPrivacyV2(t *testing.T) {
 			)
 		}
 
-		if uint64(tokenID) != event.TokenID {
+		if uint32(tokenID) != event.VehicleTokenID {
 			t.Errorf("Expected TokenID to be %d", tokenID)
 		}
 
